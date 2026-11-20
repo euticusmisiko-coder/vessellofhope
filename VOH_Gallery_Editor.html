@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VOH Gallery Manager</title>
+<style>
+:root{--navy:#102d3a;--teal:#168c91;--gold:#d8b45b;--paper:#f3f7f7;--ink:#20343d;--line:#dce5e6}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 Arial,sans-serif}
+header{background:linear-gradient(120deg,#102d3a,#17666b);color:white;padding:32px max(5vw,20px)}
+.kicker{color:#e8cd83;letter-spacing:.14em;text-transform:uppercase;font-size:12px;font-weight:bold}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.08;margin:9px 0}
+header p{color:#e1eeee;margin:8px 0}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}button,.btn{border:0;border-radius:9px;padding:10px 14px;font-weight:bold;cursor:pointer}
+nav button{background:#ffffff18;color:white;border:1px solid #ffffff50}nav button.active{background:var(--gold);color:var(--navy)}
+main{max-width:1150px;margin:25px auto;padding:0 18px 45px}.hidden{display:none!important}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h2{margin:0;color:var(--navy);font-size:25px}.muted{color:#657780;margin:3px 0 16px}
+.panel,.card{background:white;border:1px solid var(--line);border-radius:15px;box-shadow:0 5px 20px #173c460b}
+.panel{padding:19px;margin:17px 0}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:15px}
+.card{overflow:hidden}.card img{width:100%;height:180px;object-fit:cover;display:block;background:#e6eeee}.body{padding:14px}
+.tag{display:inline-block;background:#e5f2f1;color:#12666a;border-radius:20px;padding:4px 9px;font-size:11px;font-weight:bold}
+h3{color:var(--navy);margin:8px 0 5px}.body p{margin:4px 0;color:#52666e}.quote{font-style:italic;color:var(--navy);font-size:17px;margin:8px 0}
+.actions,.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.primary{background:var(--teal);color:white}.secondary{background:#e8f0f0;color:var(--navy)}.danger{background:#fff0f0;color:#a53c3c}
+input,select,textarea{width:100%;padding:11px;border:1px solid #cbd8da;border-radius:8px;margin-top:5px;font:inherit}
+label{font-size:13px;font-weight:bold;color:#40545d;display:block}form{display:grid;grid-template-columns:1fr 1fr;gap:13px}.wide{grid-column:1/-1}
+.notice{background:#fff8e7;border:1px solid #ead7a4;padding:12px;border-radius:10px;color:#685321;font-size:13px;margin:15px 0}
+.empty{padding:25px;text-align:center;border:1px dashed #b9c9cb;border-radius:12px;color:#657780;grid-column:1/-1}
+footer{text-align:center;background:var(--navy);color:#d9e6e7;padding:24px}
+@media(max-width:650px){form{grid-template-columns:1fr}.wide{grid-column:auto}.panel{padding:14px}}
+</style></head>
+<body>
+<header><div class="kicker">Covenant Vessel of Hope Vocational Training Centre</div>
+<h1>Voices of Hope.<br>Skills in Action.</h1>
+<p>Restoring Hope · Building Skills · Transforming Lives<br>Wamuini – Kitale, Trans Nzoia County, Kenya</p>
+<nav><button class="active" data-tab="gallery">Workshop gallery</button><button data-tab="stories">Student testimonials</button><button data-tab="manage">Manage content</button></nav></header>
+<main>
+<section id="gallery"><div class="toolbar"><div><h2>Workshop Gallery</h2><p class="muted">Explore practical learning across our programmes.</p></div><select id="filter" style="max-width:230px"><option>All departments</option></select></div><div id="photos" class="grid"></div></section>
+<section id="stories" class="hidden"><h2>Student Voices</h2><p class="muted">Stories of learning, courage and new beginnings.</p><div id="testimonials" class="grid"></div></section>
+<section id="manage" class="hidden"><h2>Gallery Manager</h2><p class="muted">Add, update and organise your photographs and stories.</p>
+<div class="notice"><b>Important:</b> Your changes are saved in this browser on this computer. They are not automatically published online or shared with other devices. Export a backup regularly. Sample testimonials and photos are illustrative—replace them with approved real content before public use.</div>
+<div class="panel"><h3 id="photoHeading">Add a workshop photograph</h3><form id="photoForm">
+<label>Photo title<input id="pTitle" required placeholder="e.g. Students practising welding"></label>
+<label>Department<select id="pCategory"></select></label>
+<label class="wide">Choose photograph<input id="pFile" type="file" accept="image/*"></label>
+<label class="wide">Caption<textarea id="pCaption" placeholder="Describe the activity shown"></textarea></label>
+<div class="wide row"><button class="primary">Save photograph</button><button type="button" class="secondary" id="clearPhoto">Clear</button></div></form></div>
+<div class="panel"><h3 id="storyHeading">Add a student testimonial</h3><form id="storyForm">
+<label>Student name<input id="sName" required placeholder="Student's name or approved profile name"></label>
+<label>Course / department<select id="sCategory"></select></label>
+<label class="wide">Student's words<textarea id="sQuote" required placeholder="Use the student's own words, with permission."></textarea></label>
+<label class="wide">Story / background<textarea id="sBody" placeholder="A short account of the student's learning journey"></textarea></label>
+<label class="wide">Student photograph (optional)<input id="sFile" type="file" accept="image/*"></label>
+<div class="wide row"><button class="primary">Save testimonial</button><button type="button" class="secondary" id="clearStory">Clear</button></div></form></div>
+<div class="panel"><h3>Departments</h3><p class="muted">Add a course or gallery category.</p><div class="row"><input id="newCat" placeholder="New department name" style="max-width:320px"><button class="primary" id="addCat">Add department</button></div><div id="cats" class="row"></div></div>
+<div class="panel"><h3>Backup and restore</h3><p class="muted">Export your content and uploaded images to a backup file. Keep it somewhere safe.</p><div class="row"><button class="primary" id="export">Export backup</button><label class="btn secondary">Import backup<input id="import" type="file" accept="application/json" style="display:none"></label><button class="danger" id="reset">Restore sample content</button></div></div>
+</section></main>
+<footer><b>COVENANT VESSEL OF HOPE VOCATIONAL TRAINING CENTRE</b><br>Restoring Hope · Building Skills · Transforming Lives<br>Wamuini – Kitale, Trans Nzoia County, Kenya</footer>
+<script>
+const CATS=["Welding & Fabrication","Carpentry & Woodwork","Fashion & Design","Hairdressing","Beauty Therapy","ICT","Electrical Installation","Food & Beverage","Motor Vehicle Mechanics","Plumbing","Life at VOH","Graduation & Success"];
+const samplePhotos=[
+{title:"Welding and fabrication practice",category:"Welding & Fabrication",caption:"Illustrative image. Replace with a photograph from your own workshop.",image:"https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=900&q=80"},
+{title:"Carpentry and woodwork",category:"Carpentry & Woodwork",caption:"Illustrative image. Add your own student projects and finished products.",image:"https://images.unsplash.com/photo-1530124566582-a618bc2615dc?auto=format&fit=crop&w=900&q=80"},
+{title:"Fashion and design",category:"Fashion & Design",caption:"Illustrative image. Replace with actual VOH sewing and garment-making photographs.",image:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=900&q=80"},
+{title:"Hair and beauty training",category:"Hairdressing",caption:"Illustrative image. Replace with actual salon training photographs.",image:"https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=900&q=80"},
+{title:"ICT and digital skills",category:"ICT",caption:"Illustrative image. Replace with photographs from your computer laboratory.",image:"https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80"},
+{title:"Electrical installation",category:"Electrical Installation",caption:"Illustrative image. Replace with actual practical training photographs.",image:"https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=900&q=80"},
+{title:"Food and hospitality",category:"Food & Beverage",caption:"Illustrative image. Replace with photographs of your kitchen practicals.",image:"https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=900&q=80"}];
+const sampleStories=[
+{name:"Illustrative student story",category:"Fashion & Design",quote:"Learning a practical skill has helped me see new possibilities for my future.",body:"Sample wording for layout purposes only. Replace with a real student's approved words and story."},
+{name:"Illustrative graduate story",category:"Welding & Fabrication",quote:"I am gaining confidence through practice and learning how to turn skills into an opportunity.",body:"Sample wording for layout purposes only. Replace with a real graduate's approved story."},
+{name:"Illustrative student journey",category:"Hairdressing",quote:"I am proud of the progress I am making and the skills I am developing.",body:"Sample wording for layout purposes only. Replace with a real student's approved words."}];
+const KEY="vohGalleryManagerV2";let data,editPhoto=null,editStory=null,pImage=null,sImage=null;
+const $=id=>document.getElementById(id);
+function fresh(){return {categories:[...CATS],photos:samplePhotos.map(x=>({...x,id:crypto.randomUUID()})),stories:sampleStories.map(x=>({...x,id:crypto.randomUUID(),image:""}))}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data));render()}catch(e){alert("Browser storage is full. Export your backup and use smaller photographs.")}}
+function esc(x=""){return String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function fillSelect(id){$(id).innerHTML=data.categories.map(c=>`<option>${esc(c)}</option>`).join("")}
+function render(){
+ ["pCategory","sCategory"].forEach(fillSelect);
+ const f=$("filter").value||"All departments";
+ const pics=data.photos.filter(x=>f==="All departments"||x.category===f);
+ $("photos").innerHTML=pics.length?pics.map(x=>`<article class="card"><img src="${esc(x.image)}" alt="${esc(x.title)}" onerror="this.style.display='none'"><div class="body"><span class="tag">${esc(x.category)}</span><h3>${esc(x.title)}</h3><p>${esc(x.caption||"")}</p><div class="actions"><button class="secondary" onclick="editP('${x.id}')">Edit</button><button class="danger" onclick="delP('${x.id}')">Delete</button></div></div></article>`).join(""):'<div class="empty">No photos in this category yet. Add one in Manage content.</div>';
+ $("testimonials").innerHTML=data.stories.length?data.stories.map(x=>`<article class="card">${x.image?`<img src="${esc(x.image)}" alt="${esc(x.name)}">`:''}<div class="body"><span class="tag">${esc(x.category)}</span><h3>${esc(x.name)}</h3><div class="quote">“${esc(x.quote)}”</div><p>${esc(x.body||"")}</p><div class="actions"><button class="secondary" onclick="editS('${x.id}')">Edit</button><button class="danger" onclick="delS('${x.id}')">Delete</button></div></div></article>`).join(""):'<div class="empty">No testimonials yet. Add one in Manage content.</div>';
+ $("cats").innerHTML=data.categories.map(c=>`<span class="tag">${esc(c)} <button style="padding:1px 5px;background:none;color:#a53c3c" onclick="delCat('${esc(c)}')">×</button></span>`).join("");
+}
+function tabs(id){document.querySelectorAll("main section").forEach(s=>s.classList.toggle("hidden",s.id!==id));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===id))}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>tabs(b.dataset.tab));
+$("filter").onchange=render;
+function readImage(file,cb){if(!file){cb(null);return}const r=new FileReader();r.onload=()=>cb(r.result);r.readAsDataURL(file)}
+$("pFile").onchange=e=>readImage(e.target.files[0],v=>pImage=v);
+$("sFile").onchange=e=>readImage(e.target.files[0],v=>sImage=v);
+$("photoForm").onsubmit=e=>{e.preventDefault();let old=data.photos.find(x=>x.id===editPhoto);let x={id:editPhoto||crypto.randomUUID(),title:$("pTitle").value,category:$("pCategory").value,caption:$("pCaption").value,image:pImage||old?.image||""};if(old)data.photos[data.photos.indexOf(old)]=x;else data.photos.unshift(x);editPhoto=null;pImage=null;e.target.reset();$("photoHeading").textContent="Add a workshop photograph";save();tabs("gallery")};
+$("storyForm").onsubmit=e=>{e.preventDefault();let old=data.stories.find(x=>x.id===editStory);let x={id:editStory||crypto.randomUUID(),name:$("sName").value,category:$("sCategory").value,quote:$("sQuote").value,body:$("sBody").value,image:sImage||old?.image||""};if(old)data.stories[data.stories.indexOf(old)]=x;else data.stories.unshift(x);editStory=null;sImage=null;e.target.reset();$("storyHeading").textContent="Add a student testimonial";save();tabs("stories")};
+window.editP=id=>{let x=data.photos.find(y=>y.id===id);editPhoto=id;$("pTitle").value=x.title;$("pCategory").value=x.category;$("pCaption").value=x.caption||"";$("photoHeading").textContent="Edit workshop photograph";tabs("manage")};
+window.editS=id=>{let x=data.stories.find(y=>y.id===id);editStory=id;$("sName").value=x.name;$("sCategory").value=x.category;$("sQuote").value=x.quote;$("sBody").value=x.body||"";$("storyHeading").textContent="Edit student testimonial";tabs("manage")};
+window.delP=id=>{if(confirm("Delete this photograph?")){data.photos=data.photos.filter(x=>x.id!==id);save()}};
+window.delS=id=>{if(confirm("Delete this testimonial?")){data.stories=data.stories.filter(x=>x.id!==id);save()}};
+window.delCat=c=>{if(confirm("Remove this department from the category list? Existing content will remain.")){data.categories=data.categories.filter(x=>x!==c);save()}};
+$("addCat").onclick=()=>{let c=$("newCat").value.trim();if(c&&!data.categories.includes(c)){data.categories.push(c);$("newCat").value="";save()}};
+$("clearPhoto").onclick=()=>{$("photoForm").reset();editPhoto=null;pImage=null;$("photoHeading").textContent="Add a workshop photograph"};
+$("clearStory").onclick=()=>{$("storyForm").reset();editStory=null;sImage=null;$("storyHeading").textContent="Add a student testimonial"};
+$("export").onclick=()=>{let blob=new Blob([JSON.stringify(data)],{type:"application/json"});let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="VOH-gallery-backup.json";a.click();URL.revokeObjectURL(a.href)};
+$("import").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!d.categories||!d.photos||!d.stories)throw 0;data=d;save();alert("Backup restored.")}catch(_){alert("That backup file could not be read.")}};r.readAsText(f)};
+$("reset").onclick=()=>{if(confirm("Replace your current content with sample content? Export a backup first if you want to keep your work.")){data=fresh();save()}};
+try{data=JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){data=fresh()}
+$("filter").innerHTML='<option>All departments</option>'+data.categories.map(c=>`<option>${esc(c)}</option>`).join("");render();
+</script></body></html>
